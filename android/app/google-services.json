@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "475309199023",
+    "project_id": "testing-6ee51",
+    "storage_bucket": "testing-6ee51.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:475309199023:android:994e757f4261bdb7074e5a",
+        "android_client_info": {
+          "package_name": "com.gem.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgfCbTyhNycNP_BAq0hYg6ucuUO8-Z-3w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
