@@ -1,19 +1,18 @@
 import 'dart:ffi';
 
 import 'package:flutter/material.dart';
+import 'package:gemapp/pages/loading.dart';
+import 'package:gemapp/widgets/BigBlackButton.dart';
 
 class FinalReviewScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: ElevatedButton(
-        onPressed: () async {
+      child: bigBlackButton(
+        action: () async {
           showDialog(
             context: context,
-            builder: (_) => AlertDialog(
-              content: CircularProgressIndicator(),
-              title: Text('Processing'),
-            ),
+            builder: (_) => AlertDialog(content:LoadingScreen()),
           );
           await Future.delayed(Duration(seconds: 2));
           Navigator.pop(context);
@@ -30,7 +29,7 @@ class FinalReviewScreen extends StatelessWidget {
             ),
           );
         },
-        child: Text('Confirm and Upload'),
+        name: 'Confirm and Upload',
       ),
     );
   }

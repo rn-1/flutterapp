@@ -1,7 +1,7 @@
 import 'dart:ffi';
 
 import 'package:flutter/material.dart';
-
+import 'package:gemapp/widgets/listing_item.dart';
 
 
 
@@ -54,23 +54,7 @@ class HomeScreen extends StatelessWidget {
             childAspectRatio: 2.2/1,
 
             children: List.generate(4, (index) {
-              return Card(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Image(image: AssetImage("image_placeholder/placeholder150.png")), // Replace with actual image URLs
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24,vertical: 5),
-                      child: Text('Item ${index + 1}'),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24,vertical: 5),
-                      child: Text('Rs. ${index * 1000 + 100}'),
-                    ),
-                    IconButton(icon: Icon(Icons.edit), onPressed: () {}),
-                  ],
-                ),
-              );
+              return ListingItem(name:"Product Name", price:"500",currQ:"22",maxQ:"50");
             }),
           ),
         ],

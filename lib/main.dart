@@ -21,6 +21,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'firebase_options.dart';
 
 void main() async {
+  
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -111,7 +112,8 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(titles[_currentIndex]),
+        centerTitle: false,
+        title: Text(titles[_currentIndex],textAlign: TextAlign.left,),
         shadowColor: Color.fromARGB(255, 0, 0, 0),
 
       ),
