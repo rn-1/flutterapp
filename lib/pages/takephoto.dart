@@ -3,27 +3,33 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:gemapp/pages/loading.dart';
+import 'package:gemapp/pages/previewphoto.dart';
+import 'package:gemapp/widgets/BigBlackButton.dart';
 import 'package:image_picker/image_picker.dart';
 
 class TakePhotoScreen extends StatefulWidget {
   @override
+  final onCompletion;
 
+  TakePhotoScreen({required this.onCompletion});
 
-  _TakePhotoScreenState createState() => _TakePhotoScreenState();
+  _TakePhotoScreenState createState() => _TakePhotoScreenState(onCompletion: onCompletion);
 }
 
 class _TakePhotoScreenState extends State<TakePhotoScreen>{
+  final onCompletion;
+  _TakePhotoScreenState({required this.onCompletion});
   int choice = 0;
 
   @override
   void initState() {
     super.initState();
   }
-  // REPLACE TEXT WITH ACTUAL PAGE WHEN TESTING ON PHONE.
   List<Widget> _pages = [useCameraScreen(), uploadImageScreen()];
 
 
-  File? _image;
+  ImageProvider<Object>? _image;
   final ImagePicker _picker = ImagePicker();
 
   Future<void> _pickImage(ImageSource source) async {
@@ -32,8 +38,9 @@ class _TakePhotoScreenState extends State<TakePhotoScreen>{
 
       if (pickedFile != null) {
         setState(() {
-          _image = File(pickedFile.path);
+          _image = AssetImage(pickedFile.path);
         });
+        onCompletion(_image);
       }
     } catch (e) {
       print('Error occurred while picking the image: $e');
@@ -43,7 +50,6 @@ class _TakePhotoScreenState extends State<TakePhotoScreen>{
 
   @override
   Widget build(BuildContext context) {
-
     if(choice == 1){
       return Scaffold(body:_pages[0]);
     }
@@ -93,53 +99,57 @@ class _TakePhotoScreenState extends State<TakePhotoScreen>{
 class useCameraScreen extends StatefulWidget{ // TODO using the camera library but it sucks tbh
   
   // final CameraController? cameraController = CameraController();
-
   @override
   _useCameraScreenState createState() => _useCameraScreenState();
   
 }
 
 class _useCameraScreenState extends State<useCameraScreen>{
-  late CameraController _controller;
-  late Future<void> _initializeControllerFuture;
+  late CameraController? _controller = null;
+  late Future<void>? _initializeControllerFuture = null;
 
   Future<void> _initializeCamera() async {
     // Obtain a list of the available cameras on the device.
-    print("initializing camera");
     final cameras = await availableCameras();
 
-    // Get a specific camera from the list of available cameras (the first camera).
-    final firstCamera = cameras.first;
+    // Check if cameras list is not empty
+    if (cameras.isNotEmpty) {
+      final firstCamera = cameras.first;
 
-    // Create a CameraController with the first camera and a specified resolution.
-    _controller = CameraController(
-      firstCamera,
-      ResolutionPreset.medium,
-    );
+      // Create a CameraController with the first camera and a specified resolution.
+      _controller = CameraController(
+        firstCamera,
+        ResolutionPreset.medium,
+      );
 
-    // Initialize the controller.
-    _initializeControllerFuture = _controller.initialize();
+      // Initialize the controller and store the Future for use in the FutureBuilder.
+      _initializeControllerFuture = _controller?.initialize();
 
-    // If the widget gets disposed while initializing, dispose the controller.
-    if (!mounted) {
-      _controller.dispose();
+      // Ensure the widget is still mounted before calling setState.
+      if (mounted) {
+        setState(() {});
+      }
+    } else {
+      print('No cameras found on this device.');
     }
   }
 
   @override
   void initState() {
-    super.initState();
     _initializeCamera();
+    super.initState();
   }
 
   @override
   void dispose() {
     // Dispose of the controller when the widget is disposed.
-    _controller.dispose();
     super.dispose();
+    _controller?.dispose();
   }
 
-  @override
+
+// How the fuck do I get to the next page????
+  @override // TODO: use _controller.takePicture() to actually take the picture.
   Widget build(BuildContext context) {
     return Scaffold(
       body:FutureBuilder<void>(
@@ -147,10 +157,26 @@ class _useCameraScreenState extends State<useCameraScreen>{
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             // If the Future is complete, display the preview.
-            return CameraPreview(_controller);
-          } else {
+            return CameraPreview(_controller as CameraController);
+          }
+          else if(_controller == null){
+            return 
+              Center(
+                child:
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                        Text("Could not find any usable cameras."),
+                        bigBlackButton(name: "OK", action: (){print("should go back but idk how");})
+                      ],
+                  )
+              );
+          }
+          else {
             // Otherwise, display a loading indicator.
-            return Center(child: CircularProgressIndicator());
+            return LoadingScreen();
           }
         },
       ),

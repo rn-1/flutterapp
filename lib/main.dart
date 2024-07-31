@@ -1,7 +1,5 @@
 // ignore_for_file: prefer_const_constructors
 
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gemapp/pages/home.dart';
@@ -13,7 +11,6 @@ import 'package:gemapp/pages/takephoto.dart';
 import 'package:gemapp/pages/previewphoto.dart';
 import 'package:gemapp/pages/filldetails.dart';
 import 'package:gemapp/pages/fillcategory.dart';
-import 'package:gemapp/pages/loading.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -34,7 +31,7 @@ class GEMApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp( // TODO future builder --> actual app
+    return MaterialApp(
       title: 'E-commerce App',
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -44,7 +41,6 @@ class GEMApp extends StatelessWidget {
     );
   }
 }
-
 
 class AuthPage extends StatefulWidget{
   @override
@@ -115,7 +111,6 @@ class _HomePageState extends State<HomePage> {
         centerTitle: false,
         title: Text(titles[_currentIndex],textAlign: TextAlign.left,),
         shadowColor: Color.fromARGB(255, 0, 0, 0),
-
       ),
       body: _pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
@@ -152,20 +147,43 @@ class AddItemProcess extends StatefulWidget {
 }
 
 class _AddItemProcessState extends State<AddItemProcess> { // TOOD fix this so that it is step based
-  final _controller = PageController();
+  int step = 0;
+  ImageProvider<Object>? _image;
+
+  void proceedImage(image){
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        setState(() {
+          print("Proceeding with image!");
+          _image = image;
+          step += 1;
+        });
+      }
+    });
+  }
+  void proceedNormal(){
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        setState(() {
+          print("Proceeding!");
+          step += 1;
+        });
+      }
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
-    return PageView(
-      controller: _controller,
-      children: [
-        TakePhotoScreen(),
-        PhotoPreviewScreen(),
-        CategorySelectionScreen(),
-        FillDetailsScreen(),
+    List<Widget> step_pages = [
+        TakePhotoScreen(onCompletion: proceedImage,),
+        PhotoPreviewScreen(onCompletion: proceedImage, image: _image),
+        CategorySelectionScreen(onCompletion: proceedNormal,),
+        FillDetailsScreen(image: _image),
         FinalReviewScreen(),
-      ],
-    );
+    ];
+
+    return  step_pages[step];
   }
 }
 

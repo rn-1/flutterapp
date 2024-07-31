@@ -7,7 +7,7 @@ class LoadingScreen extends StatelessWidget{
   Widget build(BuildContext builder){
     return Column(
         mainAxisAlignment: MainAxisAlignment.center, 
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Row(
