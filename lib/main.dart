@@ -148,42 +148,15 @@ class AddItemProcess extends StatefulWidget {
 
 class _AddItemProcessState extends State<AddItemProcess> { // TOOD fix this so that it is step based
   int step = 0;
-  ImageProvider<Object>? _image;
-
-  void proceedImage(image){
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        setState(() {
-          print("Proceeding with image!");
-          _image = image;
-          step += 1;
-        });
-      }
-    });
-  }
-  void proceedNormal(){
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        setState(() {
-          print("Proceeding!");
-          step += 1;
-        });
-      }
-    });
-  }
 
 
   @override
   Widget build(BuildContext context) {
     List<Widget> step_pages = [
-        TakePhotoScreen(onCompletion: proceedImage,),
-        PhotoPreviewScreen(onCompletion: proceedImage, image: _image),
-        CategorySelectionScreen(onCompletion: proceedNormal,),
-        FillDetailsScreen(image: _image),
-        FinalReviewScreen(),
+        TakePhotoScreen(),
     ];
 
-    return  step_pages[step];
+    return step_pages[step];
   }
 }
 

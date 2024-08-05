@@ -4,8 +4,16 @@ import 'package:flutter/material.dart';
 class DropTextField extends StatelessWidget{
   final TextEditingController controller = TextEditingController();
   final String name;
-
+  
   DropTextField({required this.name});
+
+  String get(){
+    return controller.text;
+  }
+  String getName(){
+    return this.name;
+  }
+
   @override
   Widget build(BuildContext builder){
     return Padding(

@@ -2,13 +2,13 @@ import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:gemapp/pages/fillcategory.dart';
 import 'package:gemapp/pages/loading.dart';
 
 class PhotoPreviewScreen extends StatefulWidget {
   
-  final onCompletion;
   ImageProvider<Object>? image;
-  PhotoPreviewScreen({required this.onCompletion, required this.image});
+  PhotoPreviewScreen({required this.image});
 
   @override
   _PhotoPreviewState createState() => _PhotoPreviewState();
@@ -42,7 +42,7 @@ class _PhotoPreviewState extends State<PhotoPreviewScreen>{
               crossAxisAlignment: CrossAxisAlignment.center,
               children:[
                 FloatingActionButton(
-                  onPressed: () => widget.onCompletion(widget.image),
+                  onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => CategorySelectionScreen(image: widget.image))),
                   tooltip: "Continue",backgroundColor: Colors.black, 
                   child: Icon(Icons.check, color: Colors.white),
                   shape: CircleBorder(),

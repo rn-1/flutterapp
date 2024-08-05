@@ -57,7 +57,7 @@ class _CategorizerState extends State<Categorizer>{
               backgroundColor: Color.fromARGB(255, 217, 217, 217),
             )
           ),
-        bigBlackButton(action: () => widget.onCompletion(), name: "Confirm")
+        bigBlackButton(action: () => widget.onCompletion(cat_controller.text), name: "Confirm")
       ]
     );
   }

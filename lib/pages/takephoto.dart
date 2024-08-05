@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:gemapp/pages/fillcategory.dart';
 import 'package:gemapp/pages/loading.dart';
 import 'package:gemapp/pages/previewphoto.dart';
 import 'package:gemapp/widgets/BigBlackButton.dart';
@@ -10,24 +11,58 @@ import 'package:image_picker/image_picker.dart';
 
 class TakePhotoScreen extends StatefulWidget {
   @override
-  final onCompletion;
 
-  TakePhotoScreen({required this.onCompletion});
 
-  _TakePhotoScreenState createState() => _TakePhotoScreenState(onCompletion: onCompletion);
+  _TakePhotoScreenState createState() => _TakePhotoScreenState();
 }
 
 class _TakePhotoScreenState extends State<TakePhotoScreen>{
-  final onCompletion;
-  _TakePhotoScreenState({required this.onCompletion});
   int choice = 0;
 
   @override
   void initState() {
     super.initState();
   }
-  List<Widget> _pages = [useCameraScreen(), uploadImageScreen()];
+  // List<Widget> _pages = [useCameraScreen(), uploadImageScreen()];
 
+
+  // ImageProvider<Object>? _image;
+  // final ImagePicker _picker = ImagePicker();
+
+  // Future<void> _pickImage(ImageSource source) async {
+  //   try {
+  //     final pickedFile = await _picker.pickImage(source: source);
+
+  //     if (pickedFile != null) {
+  //       setState(() {
+  //         _image = AssetImage(pickedFile.path);
+  //       });
+  //     }
+  //   } catch (e) {
+  //     print('Error occurred while picking the image: $e');
+  //   }
+  // }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        body: Navigator(
+          onGenerateRoute: (settings){
+            Widget page = SelectScreen();
+            return MaterialPageRoute(builder: (_) => page);
+          },
+        )
+    );
+  }
+}
+
+
+class SelectScreen extends StatefulWidget{
+  @override
+  _SelectScreenState createState() => _SelectScreenState();
+}
+
+class _SelectScreenState extends State<SelectScreen>{
 
   ImageProvider<Object>? _image;
   final ImagePicker _picker = ImagePicker();
@@ -40,59 +75,46 @@ class _TakePhotoScreenState extends State<TakePhotoScreen>{
         setState(() {
           _image = AssetImage(pickedFile.path);
         });
-        onCompletion(_image);
       }
     } catch (e) {
       print('Error occurred while picking the image: $e');
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
-    if(choice == 1){
-      return Scaffold(body:_pages[0]);
-    }
-    if(choice == 2){
-      return Scaffold(body:_pages[1]);
-    }
-    else{
-      return Scaffold(
-          body:
-          Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              onPressed: () => setState((){choice = 1;}),
-              child: Column(
-                children:[
-                  const ListTile(
-                    leading: Icon(Icons.camera_alt,color: Color.fromRGBO(75, 165, 221, 1)),
-                    title: Text('Take Photo'),
-                  )
-                ]
-              )
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24, vertical:10),
-              child: Text("or")
-            ),
-            ElevatedButton(
-              onPressed: () => _pickImage(ImageSource.gallery),
-              child: Column(
-                children:[
-                  const ListTile(
-                    leading: Icon(Icons.upload, color: Color.fromRGBO(75, 165, 221, 1)),
-                    title: Text('Upload from photos'),
-                  )
-                ]
-              )
+    return Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ElevatedButton(
+            onPressed: (){Navigator.of(context).push(MaterialPageRoute(builder: (context) => useCameraScreen()));},
+            child: Column(
+              children:[
+                const ListTile(
+                  leading: Icon(Icons.camera_alt,color: Color.fromRGBO(75, 165, 221, 1)),
+                  title: Text('Take Photo'),
+                )
+              ]
             )
-          ],
-        )
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 24, vertical:10),
+            child: Text("or")
+          ),
+          ElevatedButton(
+            onPressed: ()async { await _pickImage(ImageSource.gallery); Navigator.of(context).push(MaterialPageRoute(builder: (context) => PhotoPreviewScreen(image:_image)));},
+            child: Column(
+              children:[
+                const ListTile(
+                  leading: Icon(Icons.upload, color: Color.fromRGBO(75, 165, 221, 1)),
+                  title: Text('Upload from photos'),
+                )
+              ]
+            )
+          )
+        ],
       );
-    }
   }
 }
 
@@ -148,7 +170,7 @@ class _useCameraScreenState extends State<useCameraScreen>{
   }
 
 
-// How the fuck do I get to the next page????
+// How the fuck do I go back a page????
   @override // TODO: use _controller.takePicture() to actually take the picture.
   Widget build(BuildContext context) {
     return Scaffold(
@@ -160,19 +182,13 @@ class _useCameraScreenState extends State<useCameraScreen>{
             return CameraPreview(_controller as CameraController);
           }
           else if(_controller == null){
-            return 
-              Center(
-                child:
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                        Text("Could not find any usable cameras."),
-                        bigBlackButton(name: "OK", action: (){print("should go back but idk how");})
-                      ],
-                  )
-              );
+            return AlertDialog(
+              icon: Icon(Icons.warning),
+              title: Text("No cameras found."),
+              actions:[
+                bigBlackButton(name: "OK", action: () => Navigator.pop(context))
+              ]
+            );
           }
           else {
             // Otherwise, display a loading indicator.
