@@ -170,7 +170,6 @@ class _useCameraScreenState extends State<useCameraScreen>{
   }
 
 
-// How the fuck do I go back a page????
   @override // TODO: use _controller.takePicture() to actually take the picture.
   Widget build(BuildContext context) {
     return Scaffold(
